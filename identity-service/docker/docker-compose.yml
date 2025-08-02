@@ -1,0 +1,19 @@
+services:
+
+  identity-db:
+    image: postgres:latest
+    container_name: identity-db
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_PASSWORD: POSTGRES@2025
+      PGDATA: /var/lib/postgresql/data
+      POSTGRES_DB: identity_service
+    volumes:
+      - identity-data:/var/lib/postgresql/data
+    ports:
+      - "5436:5432"
+
+volumes:
+  identity-data:
+    name: identity-data
