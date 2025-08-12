@@ -1,0 +1,89 @@
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# Environment variables
+.env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+
+# Docker
+.dockerignore
+
+# Test files
+test-results/
+coverage/
+
+# Node.js (for root level scripts)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# Yarn cache and files
+.yarn/
+.yarnrc
+.yarn-integrity
+
+# Java (for any root level Java files)
+*.class
+*.jar
+*.war
+target/
+
+# Database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# Cache directories
+.cache/
+.parcel-cache/
+
+# Build outputs
+dist/
+build/
+out/
+
+# Security files
+*.pem
+*.key
+*.crt
+*.csr
+*.p12
+
+# Documentation build
+docs/_build/
+
+# Local configuration files
+config.local.*
+settings.local.*

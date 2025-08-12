@@ -1,7 +1,6 @@
 package com.devteria.identity.dto.request;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

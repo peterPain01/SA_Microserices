@@ -48,4 +48,10 @@ public class AuthenticationController {
         authenticationService.logout(request);
         return ApiResponse.<Void>builder().build();
     }
+
+    @PostMapping("/drivers")
+    ApiResponse<Void> testSyncDriver(@RequestBody DriverRequest request) {
+        System.out.println(request.toString());
+        return ApiResponse.<Void>builder().build();
+    }
 }

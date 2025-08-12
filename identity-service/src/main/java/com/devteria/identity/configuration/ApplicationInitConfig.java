@@ -2,16 +2,16 @@ package com.devteria.identity.configuration;
 
 import java.util.HashSet;
 
-import com.devteria.identity.entity.AppUser;
-import com.devteria.identity.entity.UsersRoles;
 import org.springframework.boot.ApplicationRunner;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.devteria.identity.constant.PredefinedRole;
+import com.devteria.identity.entity.AppUser;
 import com.devteria.identity.entity.Role;
+import com.devteria.identity.entity.UsersRoles;
+import com.devteria.identity.entity.UsersRolesRepository;
 import com.devteria.identity.repository.RoleRepository;
 import com.devteria.identity.repository.UserRepository;
 
@@ -36,7 +36,8 @@ public class ApplicationInitConfig {
     static final String ADMIN_PASSWORD = "admin";
 
     @Bean
-    ApplicationRunner applicationRunner(UserRepository userRepository, RoleRepository roleRepository) {
+    ApplicationRunner applicationRunner(
+            UserRepository userRepository, RoleRepository roleRepository, UsersRolesRepository usersRolesRepository) {
         log.info("Initializing application.....");
         return args -> {
             if (userRepository.findByUsername(ADMIN_USER_NAME).isEmpty()) {
@@ -64,14 +65,11 @@ public class ApplicationInitConfig {
 
                 HashSet<UsersRoles> usersRoles = new HashSet<>();
                 for (Role role : roles) {
-                    usersRoles.add(UsersRoles.builder()
-                            .user(savedAdmin)
-                            .role(role)
-                            .build());
+                    usersRoles.add(
+                            UsersRoles.builder().user(savedAdmin).role(role).build());
                 }
 
-                user.setUsersRoles(usersRoles);
-
+                usersRolesRepository.saveAll(usersRoles);
 
                 log.warn("admin user has been created with default password: admin, please change it");
             }

@@ -9,9 +9,6 @@ import java.util.StringJoiner;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import com.devteria.identity.entity.AppUser;
-import com.devteria.identity.entity.Role;
-import com.devteria.identity.entity.UsersRoles;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +21,10 @@ import com.devteria.identity.dto.request.LogoutRequest;
 import com.devteria.identity.dto.request.RefreshRequest;
 import com.devteria.identity.dto.response.AuthenticationResponse;
 import com.devteria.identity.dto.response.IntrospectResponse;
+import com.devteria.identity.entity.AppUser;
 import com.devteria.identity.entity.InvalidatedToken;
+import com.devteria.identity.entity.Role;
+import com.devteria.identity.entity.UsersRoles;
 import com.devteria.identity.exception.AppException;
 import com.devteria.identity.exception.ErrorCode;
 import com.devteria.identity.repository.InvalidatedTokenRepository;
@@ -61,7 +61,7 @@ public class AuthenticationService {
     @Value("${jwt.refreshable-duration}")
     protected long REFRESHABLE_DURATION;
 
-    public IntrospectResponse introspect(IntrospectRequest request)  {
+    public IntrospectResponse introspect(IntrospectRequest request) {
         var token = request.getToken();
         boolean isValid = true;
 
@@ -100,7 +100,7 @@ public class AuthenticationService {
                     InvalidatedToken.builder().id(jit).expiryTime(expiryTime).build();
 
             invalidatedTokenRepository.save(invalidatedToken);
-        } catch (AppException exception){
+        } catch (AppException exception) {
             log.info("Token already expired");
         }
     }
@@ -134,8 +134,7 @@ public class AuthenticationService {
                 .issuer("shopee-goods")
                 .issueTime(new Date())
                 .expirationTime(new Date(
-                        Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()
-                ))
+                        Instant.now().plus(VALID_DURATION, ChronoUnit.SECONDS).toEpochMilli()))
                 .jwtID(UUID.randomUUID().toString())
                 .claim("scope", buildScope(user))
                 .build();
@@ -159,8 +158,12 @@ public class AuthenticationService {
         SignedJWT signedJWT = SignedJWT.parse(token);
 
         Date expiryTime = (isRefresh)
-                ? new Date(signedJWT.getJWTClaimsSet().getIssueTime()
-                .toInstant().plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS).toEpochMilli())
+                ? new Date(signedJWT
+                        .getJWTClaimsSet()
+                        .getIssueTime()
+                        .toInstant()
+                        .plus(REFRESHABLE_DURATION, ChronoUnit.SECONDS)
+                        .toEpochMilli())
                 : signedJWT.getJWTClaimsSet().getExpirationTime();
 
         var verified = signedJWT.verify(verifier);
@@ -176,9 +179,7 @@ public class AuthenticationService {
     private String buildScope(AppUser user) {
         StringJoiner stringJoiner = new StringJoiner(" ");
 
-        Set<Role> roles = user.getUsersRoles().stream()
-                .map(UsersRoles::getRole)
-                .collect(Collectors.toSet());
+        Set<Role> roles = user.getUsersRoles().stream().map(UsersRoles::getRole).collect(Collectors.toSet());
         if (!CollectionUtils.isEmpty(roles))
             roles.forEach(role -> {
                 stringJoiner.add("ROLE_" + role.getName());

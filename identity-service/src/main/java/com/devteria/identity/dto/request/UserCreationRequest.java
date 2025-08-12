@@ -22,9 +22,11 @@ public class UserCreationRequest {
 
     @Size(min = 6, message = "INVALID_PASSWORD")
     String password;
+
     @Email(message = "INVALID_EMAIL")
     @NotBlank(message = "EMAIL_IS_REQUIRED")
     String email;
+
     String firstName;
     String lastName;
 

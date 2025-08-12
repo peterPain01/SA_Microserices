@@ -3,8 +3,6 @@ package com.devteria.identity.service;
 import java.util.HashSet;
 import java.util.List;
 
-import com.devteria.event.dto.NotificationEvent;
-import com.devteria.identity.entity.UsersRoles;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,12 +10,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.devteria.event.dto.NotificationEvent;
 import com.devteria.identity.constant.PredefinedRole;
 import com.devteria.identity.dto.request.UserCreationRequest;
 import com.devteria.identity.dto.request.UserUpdateRequest;
 import com.devteria.identity.dto.response.UserResponse;
-import com.devteria.identity.entity.Role;
 import com.devteria.identity.entity.AppUser;
+import com.devteria.identity.entity.Role;
+import com.devteria.identity.entity.UsersRoles;
 import com.devteria.identity.exception.AppException;
 import com.devteria.identity.exception.ErrorCode;
 import com.devteria.identity.mapper.ProfileMapper;
@@ -52,18 +52,15 @@ public class UserService {
         roleRepository.findById(PredefinedRole.USER_ROLE).ifPresent(roles::add);
 
         HashSet<UsersRoles> usersRoles = new HashSet<>();
-        for(var role : roles){
-            usersRoles.add(UsersRoles.builder()
-                    .user(user)
-                    .role(role)
-                    .build());
+        for (var role : roles) {
+            usersRoles.add(UsersRoles.builder().user(user).role(role).build());
         }
         user.setUsersRoles(usersRoles);
         user.setEmailVerified(false);
 
         try {
             user = userRepository.save(user);
-        } catch (DataIntegrityViolationException exception){
+        } catch (DataIntegrityViolationException exception) {
             throw new AppException(ErrorCode.USER_EXISTED);
         }
 
@@ -92,7 +89,8 @@ public class UserService {
         var context = SecurityContextHolder.getContext();
         String name = context.getAuthentication().getName();
 
-        AppUser user = userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
+        AppUser user =
+                userRepository.findByUsername(name).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED));
 
         return userMapper.toUserResponse(user);
     }
@@ -107,11 +105,8 @@ public class UserService {
         var roles = roleRepository.findAllById(request.getRoles());
 
         HashSet<UsersRoles> usersRoles = new HashSet<>();
-        for(var role : roles){
-            usersRoles.add(UsersRoles.builder()
-                    .user(user)
-                    .role(role)
-                    .build());
+        for (var role : roles) {
+            usersRoles.add(UsersRoles.builder().user(user).role(role).build());
         }
         user.setUsersRoles(usersRoles);
 
